@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LibManager Pro{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="{{ url_for('static', filename='logo-full.svg') }}" alt="LibManager Pro" height="40">
+        </a>
+        <div class="navbar-nav">
+            {% if session.get('user') %}
+                <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="/books"><i class="fas fa-book"></i> Books</a>
+                <a href="/member/{{ session.user }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            {% elif session.get('librarian') %}
+                <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="/books"><i class="fas fa-book"></i> Books</a>
+                <a href="/librarian"><i class="fas fa-cog"></i> Panel</a>
+                <a href="/librarian/charts"><i class="fas fa-chart-bar"></i> Charts</a>
+                <a href="/librarian/report"><i class="fas fa-file-alt"></i> Reports</a>
+            {% else %}
+                <a href="/#features"><i class="fas fa-star"></i> Features</a>
+                <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+        <div class="navbar-user">
+            {% if session.get('user') or session.get('librarian') %}
+                <div class="notif-bell" id="notifBell" onclick="toggleNotifs()">
+                    <i class="fas fa-bell"></i>
+                    <div class="badge-dot" id="notifDot"></div>
+                    <div class="notif-dropdown" id="notifDropdown"></div>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"></button>
+                <div style="position:relative;display:inline-block">
+                    <button onclick="document.getElementById('langMenu').classList.toggle('show')" style="background:transparent;border:1px solid #475569;color:#fff;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.85rem">
+                        <i class="fas fa-globe"></i> {{ 'EN' if lang == 'en' else 'HI' }}
+                    </button>
+                    <div id="langMenu" style="position:absolute;top:100%;right:0;background:#1e293b;border:1px solid #334155;border-radius:8px;display:none;z-index:1000;min-width:100px;box-shadow:0 4px 12px rgba(0,0,0,0.3)">
+                        <a href="/lang/en" style="display:block;padding:8px 14px;color:#f8fafc;text-decoration:none;font-size:0.85rem">English</a>
+                        <a href="/lang/hi" style="display:block;padding:8px 14px;color:#f8fafc;text-decoration:none;font-size:0.85rem">Hindi</a>
+                    </div>
+                </div>
+            {% endif %}
+            {% if session.get('user') %}
+                <a href="/member/{{ session.user }}" style="text-decoration:none;color:#fff;display:flex;align-items:center;gap:10px">
+                    <div class="avatar">{{ session.user[0] }}</div>
+                    <span style="font-weight:500;font-size:0.9rem">{{ session.user }}</span>
+                </a>
+                <a href="/logout" style="color:#94a3b8;text-decoration:none"><i class="fas fa-sign-out-alt"></i></a>
+            {% elif session.get('librarian') %}
+                <a href="/librarian" style="text-decoration:none;color:#fff;display:flex;align-items:center;gap:10px">
+                    <div class="avatar">{{ session.librarian[0]|upper }}</div>
+                    <span style="font-weight:500;font-size:0.9rem">Librarian</span>
+                </a>
+                <a href="/logout" style="color:#94a3b8;text-decoration:none"><i class="fas fa-sign-out-alt"></i></a>
+            {% else %}
+                <a href="/register" class="btn btn-outline btn-sm" style="color:#fff;border-color:#475569"><i class="fas fa-user-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for cat, msg in messages %}
+                    <div class="alert alert-{{ cat }}">
+                        <i class="fas {% if cat == 'success' %}fa-check-circle{% elif cat == 'danger' %}fa-exclamation-circle{% elif cat == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <img src="{{ url_for('static', filename='logo.svg') }}" alt="LibManager Pro" height="32" style="opacity:0.8">
+        <p style="margin-top:8px;font-weight:600">LibManager Pro</p>
+        <p style="font-size:0.8rem;color:#94a3b8">Professional Library Management System</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+
+        function toggleNotifs() {
+            document.getElementById('notifDropdown').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.notif-bell')) {
+                document.getElementById('notifDropdown').classList.remove('show');
+            }
+            if (!e.target.closest('#langMenu') && !e.target.closest('[onclick*="langMenu"]')) {
+                var lm = document.getElementById('langMenu');
+                if (lm) lm.classList.remove('show');
+            }
+        });
+
+        {% if session.get('user') %}
+        fetch('/api/notifications').then(r => r.json()).then(data => {
+            const dropdown = document.getElementById('notifDropdown');
+            const dot = document.getElementById('notifDot');
+            if (data.length > 0) {
+                dot.style.display = 'block';
+                dropdown.innerHTML = data.map(n => '<div class="notif-item" style="color:var(--' + n.color + ')"><i class="fas fa-' + (n.type === 'overdue' ? 'exclamation-circle' : 'clock') + '"></i> ' + n.message + '</div>').join('');
+            } else {
+                dropdown.innerHTML = '<div class="notif-item" style="color:var(--gray)"><i class="fas fa-check-circle"></i> No notifications</div>';
+            }
+        });
+        {% endif %}
+    </script>
+</body>
+</html>

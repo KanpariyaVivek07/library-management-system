@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-tachometer-alt"></i> {{ t.dashboard }}</h1>
+        <p style="color:var(--gray);font-size:0.9rem">Overview of your library</p>
+    </div>
+    {% if session.get('librarian') %}
+        <a href="/librarian/add-book" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_book }}</a>
+    {% endif %}
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-copy"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_copies }}</div>
+            <div class="label">{{ t.total_copies }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-book"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_unique_books }}</div>
+            <div class="label">{{ t.unique_books }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ available_copies }}</div>
+            <div class="label">{{ t.available }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-exchange-alt"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ issued_copies }}</div>
+            <div class="label">{{ t.issued }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_members }}</div>
+            <div class="label">{{ t.members_label }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-info">
+            <div class="number">${{ "%.2f"|format(total_fine) }}</div>
+            <div class="label">{{ t.unpaid_fines }}</div>
+        </div>
+    </div>
+</div>
+
+{% if low_stock %}
+<div class="card" style="margin-bottom:24px">
+    <div class="card-header">
+        <h2><i class="fas fa-exclamation-triangle" style="color:var(--warning)"></i> Low Stock Alert</h2>
+    </div>
+    {% for book, copies in low_stock %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:12px">
+                <i class="fas fa-book" style="color:var(--warning)"></i>
+                <span style="font-weight:500">{{ book }}</span>
+            </div>
+            <span class="badge badge-warning"><i class="fas fa-cube"></i> {{ copies }} left</span>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if out_of_stock %}
+<div class="card" style="margin-bottom:24px">
+    <div class="card-header">
+        <h2><i class="fas fa-ban" style="color:var(--danger)"></i> Out of Stock</h2>
+    </div>
+    {% for book in out_of_stock %}
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);color:var(--danger)">
+            <i class="fas fa-times-circle"></i> {{ book }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if recent_transactions %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-history"></i> Recent Transactions</h2>
+        <a href="/transactions" class="btn btn-outline btn-sm"><i class="fas fa-arrow-right"></i> View All</a>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Member</th><th>Book</th><th>Type</th><th>Date</th><th>Amount</th></tr>
+            </thead>
+            <tbody>
+                {% for t in recent_transactions[:5] %}
+                <tr>
+                    <td><i class="fas fa-user" style="color:var(--gray);margin-right:6px"></i>{{ t.member }}</td>
+                    <td><strong>{{ t.book }}</strong></td>
+                    <td>
+                        {% if t.type == 'Issue' %}<span class="badge badge-info"><i class="fas fa-arrow-up"></i> Issue</span>
+                        {% elif t.type == 'Return' %}<span class="badge badge-success"><i class="fas fa-arrow-down"></i> Return</span>
+                        {% elif t.type == 'Purchase' %}<span class="badge badge-warning"><i class="fas fa-shopping-cart"></i> Purchase</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ t.date[:10] }}</td>
+                    <td>
+                        {% if t.price is defined %}<strong>${{ "%.2f"|format(t.price) }}</strong>
+                        {% elif t.fine is defined and t.fine > 0 %}<span style="color:var(--danger)">${{ "%.2f"|format(t.fine) }}</span>
+                        {% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Transactions - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-exchange-alt"></i> Transactions</h1>
+        <p style="color:var(--gray);font-size:0.9rem">{{ transactions|length }} records found</p>
+    </div>
+    {% if session.get('librarian') %}
+        <a href="/librarian/export" class="btn btn-success btn-sm"><i class="fas fa-file-csv"></i> Export CSV</a>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-bottom:24px">
+    <form method="GET" style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+        <div class="form-group" style="min-width:150px;margin:0">
+            <label><i class="fas fa-filter"></i> Type</label>
+            <select name="type" class="form-control">
+                <option value="">All Types</option>
+                <option value="Issue" {% if type_filter == 'Issue' %}selected{% endif %}>Issue</option>
+                <option value="Return" {% if type_filter == 'Return' %}selected{% endif %}>Return</option>
+                <option value="Purchase" {% if type_filter == 'Purchase' %}selected{% endif %}>Purchase</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:150px;margin:0">
+            <label><i class="fas fa-user"></i> Member</label>
+            <input type="text" name="member" class="form-control" placeholder="Member name..." value="{{ member_filter or '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Member</th><th>Book</th><th>Type</th><th>Date</th><th>Amount</th></tr></thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td><i class="fas fa-user" style="color:var(--gray);margin-right:6px"></i>{{ t.member }}</td>
+                    <td><strong>{{ t.book }}</strong></td>
+                    <td>
+                        {% if t.type == 'Issue' %}<span class="badge badge-info"><i class="fas fa-arrow-up"></i> Issue</span>
+                        {% elif t.type == 'Return' %}<span class="badge badge-success"><i class="fas fa-arrow-down"></i> Return</span>
+                        {% elif t.type == 'Purchase' %}<span class="badge badge-warning"><i class="fas fa-shopping-cart"></i> Purchase</span>{% endif %}
+                    </td>
+                    <td>{{ t.date[:16] }}</td>
+                    <td>
+                        {% if t.price is defined %}<strong>${{ "%.2f"|format(t.price) }}</strong>
+                        {% elif t.fine is defined and t.fine > 0 %}<span style="color:var(--danger)"><i class="fas fa-exclamation-circle"></i> ${{ "%.2f"|format(t.fine) }} fine</span>
+                        {% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

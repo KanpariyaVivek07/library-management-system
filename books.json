@@ -1,0 +1,35 @@
+{
+    "Js": {
+        "author": "Chirag",
+        "price": 500.0,
+        "available_copies": 27,
+        "total_copies": 30,
+        "category": "Programming",
+        "condition": "Good",
+        "added_date": "2025-03-18 23:58:45",
+        "isbn": "",
+        "cover": ""
+    },
+    "Java": {
+        "author": "Vivek",
+        "price": 200.0,
+        "available_copies": 15,
+        "total_copies": 15,
+        "category": "Programming",
+        "condition": "New",
+        "added_date": "2025-03-18 23:59:08",
+        "isbn": "",
+        "cover": ""
+    },
+    "Python": {
+        "author": "Meet",
+        "price": 550.0,
+        "available_copies": 20,
+        "total_copies": 20,
+        "category": "Programming",
+        "condition": "Good",
+        "added_date": "2026-09-02 21:09",
+        "isbn": "",
+        "cover": ""
+    }
+}

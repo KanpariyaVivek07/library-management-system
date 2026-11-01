@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}My Profile - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-user-circle"></i> {{ member.name }}'s Profile</h1>
+        <p style="color:var(--gray);font-size:0.9rem">Member ID: {{ member.member_id }}</p>
+    </div>
+    <div style="display:flex;gap:10px">
+        <a href="/change-password" class="btn btn-outline btn-sm"><i class="fas fa-lock"></i> Change Password</a>
+        {% if member.fine_due > 0 %}
+            <a href="/pay-fine" class="btn btn-danger btn-sm"><i class="fas fa-dollar-sign"></i> Pay Fine</a>
+        {% endif %}
+    </div>
+</div>
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-id-card"></i> Account</h2></div>
+        <div style="display:grid;gap:12px">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--gray)"><i class="fas fa-user"></i> Name</span><strong>{{ member.name }}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--gray)"><i class="fas fa-hashtag"></i> ID</span><strong>{{ member.member_id }}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--gray)"><i class="fas fa-book"></i> Borrowed</span><strong>{{ member.borrowed_books|length }} / 5</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0">
+                <span style="color:var(--gray)"><i class="fas fa-dollar-sign"></i> Fine Due</span>
+                <strong style="color:{% if member.fine_due > 0 %}var(--danger){% else %}var(--success){% endif %}">${{ "%.2f"|format(member.fine_due) }}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-id-badge"></i> Member Card</h2></div>
+        <div class="member-card">
+            <div class="card-logo">
+                <img src="{{ url_for('static', filename='logo-dark.svg') }}" alt="LibManager Pro" height="32">
+            </div>
+            <div style="margin:20px 0">
+                <div style="font-size:0.8rem;color:#94a3b8;margin-bottom:4px">MEMBER NAME</div>
+                <div style="font-size:1.2rem;font-weight:600">{{ member.name }}</div>
+            </div>
+            <div class="card-info">
+                <div>
+                    <div style="font-size:0.7rem;color:#94a3b8">ID</div>
+                    <div class="card-id">{{ member.member_id }}</div>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-size:0.7rem;color:#94a3b8">STATUS</div>
+                    <div style="font-weight:600;color:#38ef7d">ACTIVE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card" style="margin-top:24px">
+    <div class="card-header"><h2><i class="fas fa-book-open"></i> Borrowed Books</h2></div>
+    {% if member.borrowed_books %}
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+                {% for b in member.borrowed_books %}
+                <tr>
+                    <td><strong>{{ b.title }}</strong></td>
+                    <td>{{ b.issue_date }}</td>
+                    <td>{{ b.due_date }}</td>
+                    <td>
+                        {% if b.overdue %}<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Overdue</span>
+                        {% else %}<span class="badge badge-success"><i class="fas fa-check"></i> On Time</span>{% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="/return/{{ b.title }}" style="display:inline" onsubmit="return confirm('Return {{ b.title }}?')">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-undo"></i> Return</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div style="text-align:center;padding:40px;color:var(--gray)">
+            <i class="fas fa-book" style="font-size:2rem;margin-bottom:10px;display:block"></i>
+            No books borrowed. <a href="/books" style="color:var(--primary);font-weight:600;text-decoration:none">Browse catalog</a>
+        </div>
+    {% endif %}
+</div>
+<div class="card" style="margin-top:24px">
+    <div class="card-header"><h2><i class="fas fa-history"></i> History</h2></div>
+    {% if member.history %}
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Date</th><th>Book</th><th>Action</th><th>Fine</th></tr></thead>
+            <tbody>
+                {% for h in member.history|reverse %}
+                <tr>
+                    <td>{{ h.date }}</td>
+                    <td><strong>{{ h.title }}</strong></td>
+                    <td>
+                        {% if h.action == 'Return' %}<span class="badge badge-success"><i class="fas fa-undo"></i> Return</span>
+                        {% else %}<span class="badge badge-warning"><i class="fas fa-shopping-cart"></i> Purchase</span>{% endif %}
+                    </td>
+                    <td>{% if h.fine > 0 %}<span style="color:var(--danger)">${{ "%.2f"|format(h.fine) }}</span>{% else %}-{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div style="text-align:center;padding:40px;color:var(--gray)"><i class="fas fa-history" style="font-size:2rem;margin-bottom:10px;display:block"></i>No history yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

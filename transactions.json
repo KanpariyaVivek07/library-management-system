@@ -1,0 +1,51 @@
+[
+    {
+        "member": "Vivek",
+        "book": "Java",
+        "type": "Issue",
+        "date": "2026-09-02 17:11",
+        "due_date": "2026-09-16 17:11"
+    },
+    {
+        "member": "Vivek",
+        "book": "Java",
+        "type": "Purchase",
+        "date": "2026-09-02 17:11",
+        "price": 200.0
+    },
+    {
+        "member": "Prateek",
+        "book": "Java",
+        "type": "Purchase",
+        "date": "2026-09-02 17:14",
+        "price": 200.0
+    },
+    {
+        "member": "Vivek",
+        "book": "Js",
+        "type": "Issue",
+        "date": "2026-09-02 19:03",
+        "due_date": "2026-09-16 19:03"
+    },
+    {
+        "member": "Vivek",
+        "book": "Js",
+        "type": "Return",
+        "date": "2026-09-02 19:03",
+        "fine": 0
+    },
+    {
+        "member": "Vivek",
+        "book": "Js",
+        "type": "Issue",
+        "date": "2026-09-02 21:12",
+        "due_date": "2026-09-16 21:12"
+    },
+    {
+        "member": "Miraj",
+        "book": "Js",
+        "type": "Purchase",
+        "date": "2026-09-03 19:12",
+        "price": 500.0
+    }
+]

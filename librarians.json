@@ -1,0 +1,12 @@
+{
+    "alice": {
+        "password": "$2b$12$pwbhgR3CE3iK.GUEPxLQEO3aek4MpdbQxTZv6duKbuD3/1HRdK84q",
+        "name": "Alice",
+        "role": "admin"
+    },
+    "bob": {
+        "password": "$2b$12$m5BgG9yevpA4teWeb7HceO1Roy1AZEQ07HS3M3pWRRS3BkbpV38IK",
+        "name": "Bob",
+        "role": "librarian"
+    }
+}

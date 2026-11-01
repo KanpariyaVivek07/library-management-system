@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Email Templates - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-envelope"></i> Email Templates</h1>
+        <p style="color:var(--gray);font-size:0.9rem">Pre-built notification templates</p>
+    </div>
+    <a href="/librarian" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-clock" style="color:var(--warning)"></i> Due Date Reminder</h2>
+        </div>
+        <div style="background:var(--light);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.8">
+            <p><strong>Subject:</strong> Book Return Reminder</p>
+            <div class="divider"></div>
+            <p>Dear {member_name},</p>
+            <p>This is a reminder that the following book(s) are due for return:</p>
+            <p><strong>Book:</strong> {book_title}</p>
+            <p><strong>Due Date:</strong> {due_date}</p>
+            <p>Please return the book to avoid late fines of $5/day.</p>
+            <p>Thank you,<br><strong>LibManager Pro</strong></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Overdue Notice</h2>
+        </div>
+        <div style="background:var(--light);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.8">
+            <p><strong>Subject:</strong> OVERDUE - Book Return Required</p>
+            <div class="divider"></div>
+            <p>Dear {member_name},</p>
+            <p>The following book is <strong>{days_overdue} days overdue</strong>:</p>
+            <p><strong>Book:</strong> {book_title}</p>
+            <p><strong>Due Date:</strong> {due_date}</p>
+            <p><strong>Fine Accrued:</strong> ${fine_amount}</p>
+            <p>Please return immediately to avoid additional charges.</p>
+            <p>Thank you,<br><strong>LibManager Pro</strong></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-check-circle" style="color:var(--success)"></i> Book Available</h2>
+        </div>
+        <div style="background:var(--light);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.8">
+            <p><strong>Subject:</strong> Reserved Book Available</p>
+            <div class="divider"></div>
+            <p>Dear {member_name},</p>
+            <p>Great news! The book you reserved is now available:</p>
+            <p><strong>Book:</strong> {book_title}</p>
+            <p>Please visit the library to collect it within 3 days.</p>
+            <p>Thank you,<br><strong>LibManager Pro</strong></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-user-plus" style="color:var(--primary)"></i> Welcome Member</h2>
+        </div>
+        <div style="background:var(--light);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.8">
+            <p><strong>Subject:</strong> Welcome to LibManager Pro</p>
+            <div class="divider"></div>
+            <p>Dear {member_name},</p>
+            <p>Welcome to our library! Your account has been created.</p>
+            <p><strong>Member ID:</strong> {member_id}</p>
+            <p>You can borrow up to 5 books at a time.</p>
+            <p>Happy reading!</p>
+            <p>Thank you,<br><strong>LibManager Pro</strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:24px">
+    <div class="card-header">
+        <h2><i class="fas fa-info-circle"></i> Note</h2>
+    </div>
+    <p style="color:var(--gray);line-height:1.8">
+        These templates are ready for integration with email services like <strong>SMTP</strong>, <strong>SendGrid</strong>, or <strong>Mailgun</strong>. 
+        To enable actual email sending, configure your SMTP settings in the application configuration. 
+        The templates use placeholders like <code>{member_name}</code>, <code>{book_title}</code>, etc. that get replaced with actual data.
+    </p>
+</div>
+{% endblock %}

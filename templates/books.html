@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Books - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-book"></i> {{ t.books }}</h1>
+        <p style="color:var(--gray);font-size:0.9rem">
+            {{ total_copies }} {{ t.total_copies }} | {{ total_books }} {{ t.unique_books }} | {{ available_copies }} {{ t.available }}
+        </p>
+    </div>
+    {% if session.get('librarian') %}
+        <a href="/librarian/add-book" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_book }}</a>
+    {% endif %}
+</div>
+
+<div class="stats-grid" style="margin-bottom:20px">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-copy"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_copies }}</div>
+            <div class="label">{{ t.total_copies }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-book"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_books }}</div>
+            <div class="label">{{ t.unique_books }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ available_copies }}</div>
+            <div class="label">{{ t.available }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-arrow-up"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_copies - available_copies }}</div>
+            <div class="label">{{ t.issued }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px">
+    <form method="GET" style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+        <div class="form-group" style="flex:2;min-width:200px;margin:0">
+            <label><i class="fas fa-search"></i> {{ t.search }}</label>
+            <input type="text" name="search" class="form-control" placeholder="Title, author, or ISBN..." value="{{ search_query or '' }}">
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px;margin:0">
+            <label><i class="fas fa-tag"></i> {{ t.category }}</label>
+            <select name="category" class="form-control">
+                <option value="">{{ t.all }}</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if cat_filter == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px;margin:0">
+            <label><i class="fas fa-heart"></i> {{ t.condition }}</label>
+            <select name="condition" class="form-control">
+                <option value="">{{ t.all }}</option>
+                {% for cond in conditions %}
+                    <option value="{{ cond }}" {% if condition_filter == cond %}selected{% endif %}>{{ cond }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px;margin:0">
+            <label><i class="fas fa-boxes"></i> {{ t.stock }}</label>
+            <select name="stock" class="form-control">
+                <option value="">{{ t.all }}</option>
+                <option value="available" {% if stock_filter == 'available' %}selected{% endif %}>{{ t.available }}</option>
+                <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>{{ t.low_stock }}</option>
+                <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>{{ t.out_of_stock }}</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px;margin:0">
+            <label><i class="fas fa-sort"></i> {{ t.sort }}</label>
+            <select name="sort" class="form-control">
+                <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Title A-Z</option>
+                <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price Low</option>
+                <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price High</option>
+                <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>Most Stock</option>
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm" style="height:38px"><i class="fas fa-filter"></i> {{ t.filter }}</button>
+        <a href="/books" class="btn btn-outline btn-sm" style="height:38px"><i class="fas fa-times"></i> {{ t.clear }}</a>
+    </form>
+</div>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Condition</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for title, book in books.items() %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px">
+                            {% if book.cover %}
+                                <img src="{{ book.cover }}" alt="" style="width:32px;height:42px;object-fit:cover;border-radius:4px">
+                            {% else %}
+                                <div style="width:32px;height:42px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem"><i class="fas fa-book"></i></div>
+                            {% endif %}
+                            <strong>{{ title }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ book.author }}</td>
+                    <td style="font-family:monospace;font-size:0.8rem;color:var(--gray)">{{ book.isbn or '-' }}</td>
+                    <td><span class="badge badge-primary">{{ book.category }}</span></td>
+                    <td><strong>${{ "%.2f"|format(book.price) }}</strong></td>
+                    <td>
+                        {% if book.available_copies > 3 %}
+                            <span class="badge badge-success">{{ book.available_copies }}</span>
+                        {% elif book.available_copies > 0 %}
+                            <span class="badge badge-warning">{{ book.available_copies }}</span>
+                        {% else %}
+                            <span class="badge badge-danger">0</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if book.condition == 'New' %}<span class="badge badge-success">New</span>
+                        {% elif book.condition == 'Good' %}<span class="badge badge-info">Good</span>
+                        {% elif book.condition == 'Worn' %}<span class="badge badge-warning">Worn</span>
+                        {% else %}<span class="badge badge-danger">{{ book.condition }}</span>{% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                            {% if session.get('user') %}
+                                {% if book.available_copies > 0 %}
+                                    <form method="POST" action="/issue/{{ title }}" style="display:inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i> Issue</button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST" action="/reserve/{{ title }}" style="display:inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-clock"></i> Reserve</button>
+                                    </form>
+                                {% endif %}
+                                <form method="POST" action="/purchase/{{ title }}" style="display:inline" onsubmit="return confirm('Buy {{ title }} for ${{ "%.2f"|format(book.price) }}?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i> Buy</button>
+                                </form>
+                            {% endif %}
+                            {% if session.get('librarian') %}
+                                <a href="/librarian/edit-book/{{ title }}" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="/qr/{{ title }}" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-qrcode"></i></a>
+                                <a href="/librarian/book-label/{{ title }}" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-tag"></i></a>
+                                <form method="POST" action="/librarian/delete-book/{{ title }}" style="display:inline" onsubmit="return confirm('Delete {{ title }}? This cannot be undone!')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

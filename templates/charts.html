@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Charts & Analytics - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-chart-bar"></i> Charts & Analytics</h1>
+        <p style="color:var(--gray);font-size:0.9rem">Visual insights of your library</p>
+    </div>
+    <a href="/librarian" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-chart-pie"></i> Books by Category</h2></div>
+        <div id="catChart" style="padding:20px">
+            {% for cat, count in categories.items() %}
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <div style="width:120px;font-size:0.9rem">{{ cat }}</div>
+                <div style="flex:1;background:var(--border);border-radius:6px;height:24px;overflow:hidden">
+                    <div style="width:{{ (count / categories.values()|max * 100)|int }}%;height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600">{{ count }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-chart-bar"></i> Stock Status</h2></div>
+        <div style="padding:20px">
+            {% for status, count in stock_status.items() %}
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <div style="width:120px;font-size:0.9rem">{{ status }}</div>
+                <div style="flex:1;background:var(--border);border-radius:6px;height:24px;overflow:hidden">
+                    {% set total = stock_status.values()|sum %}
+                    {% set color = '#059669' if status == 'Available' else ('#d97706' if status == 'Low Stock' else '#dc2626') %}
+                    <div style="width:{{ (count / total * 100)|int if total > 0 else 0 }}%;height:100%;background:{{ color }};border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600">{{ count }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-fire"></i> Most Popular Books</h2></div>
+        <div style="padding:20px">
+            {% for book, count in popular %}
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                <div style="width:28px;height:28px;background:{{ '#fef3c7' if loop.index <= 3 else 'var(--light)' }};border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:{{ 'var(--warning)' if loop.index <= 3 else 'var(--gray)' }}">{{ loop.index }}</div>
+                <div style="flex:1">{{ book }}</div>
+                <div style="width:{{ count * 20 }}px;height:8px;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px"></div>
+                <span class="badge badge-info">{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-heart"></i> Book Conditions</h2></div>
+        <div style="padding:20px">
+            {% for cond, count in conditions.items() %}
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <div style="width:120px;font-size:0.9rem">{{ cond }}</div>
+                <div style="flex:1;background:var(--border);border-radius:6px;height:24px;overflow:hidden">
+                    {% set total = conditions.values()|sum %}
+                    {% set color = '#059669' if cond == 'New' else ('#2563eb' if cond == 'Good' else ('#d97706' if cond == 'Worn' else '#dc2626')) %}
+                    <div style="width:{{ (count / total * 100)|int if total > 0 else 0 }}%;height:100%;background:{{ color }};border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600">{{ count }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2><i class="fas fa-calendar"></i> Monthly Activity</h2></div>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Month</th><th>Issues</th><th>Revenue</th></tr></thead>
+            <tbody>
+                {% for month in monthly_issues.keys()|list + monthly_revenue.keys()|list|unique|sort %}
+                <tr>
+                    <td><strong>{{ month }}</strong></td>
+                    <td><span class="badge badge-info">{{ monthly_issues.get(month, 0) }}</span></td>
+                    <td><strong>${{ "%.2f"|format(monthly_revenue.get(month, 0)) }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

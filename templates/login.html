@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Login - LibManager Pro{% endblock %}
+{% block content %}
+<div class="card" style="max-width:460px;margin:50px auto">
+    <div style="text-align:center;margin-bottom:24px">
+        <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:#fff"><i class="fas fa-sign-in-alt"></i></div>
+        <h2>Sign In</h2>
+        <p style="color:var(--gray);font-size:0.9rem;margin-top:4px">Access your library account</p>
+    </div>
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label><i class="fas fa-user-tag"></i> Login As</label>
+            <select name="login_type" class="form-control" required>
+                <option value="member"><i class="fas fa-user"></i> Member</option>
+                <option value="librarian"><i class="fas fa-user-tie"></i> Librarian</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-user"></i> Name</label>
+            <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:10px"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+    </form>
+    <p style="text-align:center;margin-top:20px;color:var(--gray);font-size:0.9rem">
+        Don't have an account? <a href="/register" style="color:var(--primary);font-weight:600;text-decoration:none">Register here</a>
+    </p>
+</div>
+{% endblock %}

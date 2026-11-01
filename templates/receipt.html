@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Receipt - LibManager Pro{% endblock %}
+{% block content %}
+<div style="max-width:500px;margin:30px auto">
+    <div style="text-align:center;margin-bottom:20px">
+        <h1 style="font-size:1.4rem;font-weight:700"><i class="fas fa-receipt"></i> Purchase Receipt</h1>
+    </div>
+    <div class="receipt" id="receipt">
+        <div class="receipt-header">
+            <img src="{{ url_for('static', filename='logo.svg') }}" alt="Logo" height="40" style="margin-bottom:8px">
+            <h3 style="margin:0">LibManager Pro</h3>
+            <p style="color:#666;font-size:0.8rem;margin:4px 0 0">Library Purchase Receipt</p>
+        </div>
+        <div style="margin:16px 0">
+            <div class="receipt-row">
+                <span>Receipt No:</span>
+                <strong>RCP-{{ "%05d"|format(idx + 1) }}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Date:</span>
+                <span>{{ txn.date[:16] }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Member:</span>
+                <strong>{{ txn.member }}</strong>
+            </div>
+        </div>
+        <hr style="border:none;border-top:1px dashed #ccc;margin:12px 0">
+        <div style="margin:12px 0">
+            <div class="receipt-row">
+                <span>Book:</span>
+                <strong>{{ txn.book }}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Type:</span>
+                <span>{{ txn.type }}</span>
+            </div>
+        </div>
+        <div class="receipt-total">
+            <div class="receipt-row">
+                <span>TOTAL PAID:</span>
+                <span style="color:#059669;font-size:1.2rem">${{ "%.2f"|format(txn.price) }}</span>
+            </div>
+        </div>
+        <div style="text-align:center;margin-top:16px;color:#666;font-size:0.8rem">
+            <p>Thank you for your purchase!</p>
+            <p>This is a computer generated receipt.</p>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center">
+        <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print Receipt</button>
+        <a href="/member/{{ txn.member }}" class="btn btn-outline"><i class="fas fa-user"></i> Back to Profile</a>
+        <a href="/books" class="btn btn-outline"><i class="fas fa-book"></i> Browse Books</a>
+    </div>
+</div>
+{% endblock %}

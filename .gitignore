@@ -1,0 +1,23 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+backups/
+*.csv
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local databases
+*.db
+*.sqlite
+.ipynb_checkpoints/

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Monthly Report - LibManager Pro{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-size:1.6rem;font-weight:700"><i class="fas fa-chart-pie"></i> Monthly Report</h1>
+        <p style="color:var(--gray);font-size:0.9rem">{{ month_name }}</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-hand-holding"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ issues }}</div>
+            <div class="label">Books Issued</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-undo"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ returns }}</div>
+            <div class="label">Books Returned</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-shopping-cart"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ purchases }}</div>
+            <div class="label">Purchases</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-info">
+            <div class="number">${{ "%.2f"|format(revenue) }}</div>
+            <div class="label">Revenue</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-fire" style="color:var(--danger)"></i> Most Issued Books</h2>
+    </div>
+    {% if popular %}
+        {% for book, count in popular %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;background:{% if loop.index == 1 %}#fef3c7{% elif loop.index == 2 %}#e2e8f0{% else %}#fed7aa{% endif %};border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:{% if loop.index == 1 %}var(--warning){% elif loop.index == 2 %}var(--gray){% else %}var(--warning){% endif %}">{{ loop.index }}</div>
+                <div>
+                    <strong>{{ book }}</strong>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:{{ count * 25 }}px;height:8px;background:linear-gradient(90deg,var(--success),#38ef7d);border-radius:4px"></div>
+                <span class="badge badge-success"><i class="fas fa-hand-pointer"></i> {{ count }}x</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align:center;padding:40px;color:var(--gray)">
+            <i class="fas fa-chart-bar" style="font-size:2.5rem;margin-bottom:12px;display:block"></i>
+            <p>No data for this month yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

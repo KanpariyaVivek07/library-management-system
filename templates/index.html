@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}LibManager Pro - Professional Library Management{% endblock %}
+{% block content %}
+<div class="hero">
+    <h1>{{ t.professional_library }}</h1>
+    <p>{{ t.professional_desc }}</p>
+    {% if not session.get('user') and not session.get('librarian') %}
+        <a href="/login" class="btn btn-primary btn-lg"><i class="fas fa-sign-in-alt"></i> {{ t.get_started }}</a>
+        <a href="/register" class="btn btn-outline btn-lg" style="margin-left:10px"><i class="fas fa-user-plus"></i> {{ t.create_account }}</a>
+    {% else %}
+        <a href="/dashboard" class="btn btn-primary btn-lg"><i class="fas fa-th-large"></i> {{ t.go_to_dashboard }}</a>
+    {% endif %}
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-copy"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_copies }}</div>
+            <div class="label">{{ t.total_copies_home }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-book"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_unique_books }}</div>
+            <div class="label">{{ t.unique_books_home }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ total_members }}</div>
+            <div class="label">{{ t.members_home }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+            <div class="number">{{ available_copies }}</div>
+            <div class="label">{{ t.available_home }}</div>
+        </div>
+    </div>
+</div>
+
+<div id="features" style="margin-top:60px">
+    <h2 style="text-align:center;margin-bottom:10px;font-size:1.8rem">{{ t.why_libmanager }}</h2>
+    <p style="text-align:center;color:var(--gray);margin-bottom:40px">{{ t.why_subtitle }}</p>
+</div>
+
+<div class="grid-3">
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#dbeafe;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--primary)"><i class="fas fa-qrcode"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.qr_support }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.qr_desc }}</p>
+    </div>
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#d1fae5;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--success)"><i class="fas fa-chart-line"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.analytics }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.analytics_desc }}</p>
+    </div>
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#ede9fe;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--secondary)"><i class="fas fa-bell"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.smart_alerts }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.alerts_desc }}</p>
+    </div>
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#fed7aa;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--warning)"><i class="fas fa-print"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.print_support }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.print_desc }}</p>
+    </div>
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#fee2e2;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--danger)"><i class="fas fa-shield-alt"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.secure }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.secure_desc }}</p>
+    </div>
+    <div class="card" style="text-align:center;padding:30px">
+        <div style="width:60px;height:60px;background:#cffafe;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--info)"><i class="fas fa-download"></i></div>
+        <h3 style="margin-bottom:8px">{{ t.export }}</h3>
+        <p style="color:var(--gray);font-size:0.9rem">{{ t.export_desc }}</p>
+    </div>
+</div>
+{% endblock %}
